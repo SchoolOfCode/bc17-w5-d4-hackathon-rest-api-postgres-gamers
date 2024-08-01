@@ -1,0 +1,60 @@
+-- Companies table
+CREATE TABLE Companies (
+    CompanyID INT PRIMARY KEY,
+    CompanyName VARCHAR(100),
+    Headquarters VARCHAR(100),
+    FoundedYear INT
+);
+
+-- Platforms table
+CREATE TABLE Platforms (
+    PlatformID INT PRIMARY KEY,
+    PlatformName VARCHAR(50)
+);
+
+-- Games table
+CREATE TABLE Games (
+    GameID INT PRIMARY KEY,
+    GameName VARCHAR(100),
+    ReleaseYear INT,
+    Genre VARCHAR(50),
+    Revenue DECIMAL(10, 2),  -- in millions of dollars
+    CompanyID INT,
+    PlatformID INT,
+    FOREIGN KEY (CompanyID) REFERENCES Companies(CompanyID),
+    FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID)
+);
+
+-- Populate Companies table
+INSERT INTO Companies (CompanyID, CompanyName, Headquarters, FoundedYear) VALUES
+(1, 'Nintendo', 'Kyoto, Japan', 1889),
+(2, 'Sony Interactive Entertainment', 'San Mateo, California, USA', 1993),
+(3, 'Microsoft Gaming', 'Redmond, Washington, USA', 2000),
+(4, 'Rockstar Games', 'New York City, New York, USA', 1998),
+(5, 'Electronic Arts', 'Redwood City, California, USA', 1982);
+
+-- Populate Platforms table
+INSERT INTO Platforms (PlatformID, PlatformName) VALUES
+(1, 'Nintendo Switch'),
+(2, 'PlayStation 5'),
+(3, 'Xbox Series X/S'),
+(4, 'PC'),
+(5, 'Mobile');
+
+-- Populate Games table
+INSERT INTO Games (GameID, GameName, ReleaseYear, Genre, Revenue, CompanyID, PlatformID) VALUES
+(1, 'The Legend of Zelda: Breath of the Wild', 2017, 'Action-Adventure', 1500.00, 1, 1),
+(2, 'Animal Crossing: New Horizons', 2020, 'Life Simulation', 2000.00, 1, 1),
+(3, 'Super Mario Odyssey', 2017, 'Platformer', 1350.00, 1, 1),
+(4, 'God of War Ragnarök', 2022, 'Action-Adventure', 1200.00, 2, 2),
+(5, 'Spider-Man: Miles Morales', 2020, 'Action-Adventure', 950.00, 2, 2),
+(6, 'Horizon Forbidden West', 2022, 'Action RPG', 850.00, 2, 2),
+(7, 'Halo Infinite', 2021, 'First-Person Shooter', 750.00, 3, 3),
+(8, 'Forza Horizon 5', 2021, 'Racing', 700.00, 3, 3),
+(9, 'Sea of Thieves', 2018, 'Action-Adventure', 650.00, 3, 3),
+(10, 'Grand Theft Auto V', 2013, 'Action-Adventure', 6000.00, 4, 4),
+(11, 'Red Dead Redemption 2', 2018, 'Action-Adventure', 3000.00, 4, 4),
+(12, 'GTA Online', 2013, 'Action-Adventure', 2500.00, 4, 4),
+(13, 'FIFA 23', 2022, 'Sports', 1800.00, 5, 4),
+(14, 'Apex Legends', 2019, 'Battle Royale', 2000.00, 5, 4),
+(15, 'The Sims 4', 2014, 'Life Simulation', 1500.00, 5, 4);
