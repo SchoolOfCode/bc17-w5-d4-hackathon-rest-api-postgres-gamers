@@ -1,54 +1,85 @@
 import { pool } from "../index.js";
 
-
-
-// >>> MAKE SURE YOU UNDERSTAND THIS FILE AND WHAT IT'S DOING <<<
-// >>> FEEL FREE TO CHANGE IT TO MAKE YOUR OWN RESOURCES (TABLES AND PROPERTIES) - YOU DON'T HAVE TO USE ALBUMS AND ARTISTS <<<
-
-
-
 async function resetDatabase() {
   try {
     // Drop existing tables if they exist
     await pool.query(`
-        DROP TABLE IF EXISTS artists CASCADE;
-        DROP TABLE IF EXISTS albums CASCADE;
+        DROP TABLE IF EXISTS Companies CASCADE;
+        DROP TABLE IF EXISTS Games CASCADE;
+        DROP TABLE IF EXISTS Platforms CASCADE;
     `);
 
-    // Create the artists table
+    // Create the companies table
     await pool.query(`
-        CREATE TABLE artists (
-            id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
-        );
+      CREATE TABLE Companies (
+          CompanyID INT PRIMARY KEY,
+          CompanyName VARCHAR(100),
+          Headquarters VARCHAR(100),
+          FoundedYear INT
+    );
     `);
 
-    // Create the albums table with a foreign key to the artists table
+    // Create the platforms table
     await pool.query(`
-        CREATE TABLE albums (
-            id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            published_date DATE,
-            artist_id INT REFERENCES artists(id)
-        );
+      CREATE TABLE Platforms (
+          PlatformID INT PRIMARY KEY,
+          PlatformName VARCHAR(50)
+      );
     `);
 
-    // Seed the artists table
+    // Create the games table with a foreign key to the companies table
     await pool.query(`
-        INSERT INTO artists (name)
-        VALUES 
-            ('Dua Lipa'),
-            ('Jay-Z');
+      CREATE TABLE Games (
+          GameID INT PRIMARY KEY,
+          GameName VARCHAR(100),
+          ReleaseYear INT,
+          Genre VARCHAR(50),
+          Revenue DECIMAL(10, 2),  -- in millions of dollars
+          CompanyID INT,
+          PlatformID INT,
+          FOREIGN KEY (CompanyID) REFERENCES Companies(CompanyID),
+          FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID)
+      );
     `);
 
-    // Seed the albums table
+    // Seed the companies table
     await pool.query(`
-        INSERT INTO albums (title, published_date, artist_id)
-        VALUES 
-            ('Dua Lipa', '2017-06-02', 1),
-            ('Future Nostalgia', '2020-03-27', 1),
-            ('Reasonable Doubt', '1996-06-25', 2),
-            ('The Blueprint', '2001-09-11', 2);
+      INSERT INTO Companies (CompanyID, CompanyName, Headquarters, FoundedYear) VALUES
+        (1, 'Nintendo', 'Kyoto, Japan', 1889),
+        (2, 'Sony Interactive Entertainment', 'San Mateo, California, USA', 1993),
+        (3, 'Microsoft Gaming', 'Redmond, Washington, USA', 2000),
+        (4, 'Rockstar Games', 'New York City, New York, USA', 1998),
+        (5, 'Electronic Arts', 'Redwood City, California, USA', 1982);
+    `);
+
+    // Seed the platforms table
+    await pool.query(`
+      INSERT INTO Platforms (PlatformID, PlatformName) VALUES
+        (1, 'Nintendo Switch'),
+        (2, 'PlayStation 5'),
+        (3, 'Xbox Series X/S'),
+        (4, 'PC'),
+        (5, 'Mobile');
+    `);
+
+    // Seed the games table
+    await pool.query(`
+      INSERT INTO Games (GameID, GameName, ReleaseYear, Genre, Revenue, CompanyID, PlatformID) VALUES
+        (1, 'The Legend of Zelda: Breath of the Wild', 2017, 'Action-Adventure', 1500.00, 1, 1),
+        (2, 'Animal Crossing: New Horizons', 2020, 'Life Simulation', 2000.00, 1, 1),
+        (3, 'Super Mario Odyssey', 2017, 'Platformer', 1350.00, 1, 1),
+        (4, 'God of War Ragnarök', 2022, 'Action-Adventure', 1200.00, 2, 2),
+        (5, 'Spider-Man: Miles Morales', 2020, 'Action-Adventure', 950.00, 2, 2),
+        (6, 'Horizon Forbidden West', 2022, 'Action RPG', 850.00, 2, 2),
+        (7, 'Halo Infinite', 2021, 'First-Person Shooter', 750.00, 3, 3),
+        (8, 'Forza Horizon 5', 2021, 'Racing', 700.00, 3, 3),
+        (9, 'Sea of Thieves', 2018, 'Action-Adventure', 650.00, 3, 3),
+        (10, 'Grand Theft Auto V', 2013, 'Action-Adventure', 6000.00, 4, 4),
+        (11, 'Red Dead Redemption 2', 2018, 'Action-Adventure', 3000.00, 4, 4),
+        (12, 'GTA Online', 2013, 'Action-Adventure', 2500.00, 4, 4),
+        (13, 'FIFA 23', 2022, 'Sports', 1800.00, 5, 4),
+        (14, 'Apex Legends', 2019, 'Battle Royale', 2000.00, 5, 4),
+        (15, 'The Sims 4', 2014, 'Life Simulation', 1500.00, 5, 4);
     `);
 
     console.log("Database reset successful");
