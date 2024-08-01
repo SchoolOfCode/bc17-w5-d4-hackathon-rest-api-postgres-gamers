@@ -49,7 +49,15 @@ app.get("/Games/", async function (req, res) {
 });
 
 // Endpoint to retrieve a <games> by id
-app.get("/Games/:id", async function (req, res) {
+app.get("/Games/:id", async function (req, res) { //endpoint
+  const id = req.params.id; //whatever is in the url parameter is now the variable "id"
+  const games = await getGamesById(id); //the variable games will be whatever the function getGamesById throws back, taking in the id variable
+  if (!games) { //if there's no game saved to the variable...
+    return res //return as a response...
+      .status(404) //status 404
+      .json({ status: "fail", data: { msg: "No games 4 u :(" } }); //json object with the properties status: fail and the data as no games for you
+  }
+  res.status(200).json({ status: "success", data: games }); //butif that doesn't proc send the json, a 200 status code and a status key
 });
 
 // Endpoint to create a new <games>
@@ -77,6 +85,14 @@ app.get("/Companies/", async function (req, res) {
   
   // Endpoint to retrieve a <companies> by id
   app.get("/Companies/:id", async function (req, res) {
+    const id = req.params.id; 
+    const companies = await getCompaniesById(id); 
+    if (!companies) {
+      return res 
+        .status(404) //status 404
+        .json({ status: "fail", data: { msg: "Must be a small indie" } });
+    }
+    res.status(200).json({ status: "success", data: companies });
   });
   
   // Endpoint to create a new <companies>
@@ -104,6 +120,14 @@ app.get("/Platforms/", async function (req, res) {
 
 // Endpoint to retrieve a <platforms> by id
 app.get("/Platforms/:id", async function (req, res) {
+  const id = req.params.id; 
+  const platforms = await getPlatformsById(id); 
+  if (!platforms) {
+    return res 
+      .status(404)
+      .json({ status: "fail", data: { msg: "Are you looking for the OUYA or something?" } });
+  }
+  res.status(200).json({ status: "success", data: platforms });
 });
 
 // Endpoint to create a new <platforms>

@@ -11,6 +11,9 @@ export async function getCompanies() {
 
 export async function getCompaniesById(id) {
   // Query the database and return the resource with a matching id or null
+  const queryText = "SELECT * FROM Companies WHERE companyid = $1";
+  const result = await pool.query(queryText, [id]);
+  return result.rows[0] || null;
 }
 
 export async function createCompanies(resource) {
