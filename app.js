@@ -77,6 +77,16 @@ app.post("/Games/", async function (req, res) {
 
 // Endpoint to update a specific <games> by id
 app.patch("/Games/:id", async function (req, res) {
+  const id = req.params.id;
+  const data = req.body;
+  const game = await updateGamesById(id, data);
+  // Assume 404 status if the game is not found
+  if (!game) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "game not found" } });
+  }
+  res.status(200).json({ status: "success", data: game });
 });
 
 // Endpoint to delete a specific <games> by id
@@ -133,8 +143,9 @@ app.get("/Platforms/", async function (req, res) {
 });
 
 // Endpoint to retrieve a <platforms> by id
-app.get("/Platforms/:id", async function (req, res) {
+app.get("/Platforms/:id/", async function (req, res) {
   const id = req.params.id; 
+  const gameid = req.params.gameid;
   const platforms = await getPlatformsById(id); 
   if (!platforms) {
     return res 

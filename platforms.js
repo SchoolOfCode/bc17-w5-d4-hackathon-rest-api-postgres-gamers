@@ -28,8 +28,15 @@ export async function createPlatforms(platform) {
     }
 }
 
-export async function updatePlatformsById(id, updates) {
+export async function updatePlatformsById(id, gameid, updates) {
   // Query the database to update the resource and return the newly updated resource or null
+  // try {const queryText = "UPDATE platforms SET platformname = $1, gameid = $2 WHERE gameId = $3 AND gameid = $2 RETURNING *";
+  //   const result = await pool.query(queryText, [updates.platformname, updates.gameid, gameid, id]);
+  //   return result.rows[0] || null;
+  //   } catch (error) {
+  //     console.error('Error updating platform:', error);
+  //     throw error;
+  //   }
 }
 
 export async function deletePlatformsById(id) {

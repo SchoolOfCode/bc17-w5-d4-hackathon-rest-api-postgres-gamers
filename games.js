@@ -23,13 +23,20 @@ export async function createGames(game) {
     const result = await pool.query(queryText, [game.gamename, game.releaseyear, game.genre, game.revenue, game.companyid]);
     return result.rows[0] || null;
   } catch (error) {
-    console.error('Error creating book:', error);
+    console.error('Error creating game:', error);
     throw error;
   }
 }
 
 export async function updateGamesById(id, updates) {
   // Query the database to update the resource and return the newly updated resource or null
+  try {const queryText = "UPDATE games SET gamename = $1, releaseyear = $2, genre = $3, revenue = $4, companyId = $5 WHERE gameId = $6 RETURNING *";
+    const result = await pool.query(queryText, [updates.gamename, updates.releaseyear, updates.genre, updates.revenue, updates.companyid, id]);
+    return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error updating game:', error);
+      throw error;
+    }
 }
 
 export async function deleteGamesById(id) {
