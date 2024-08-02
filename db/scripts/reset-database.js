@@ -4,9 +4,10 @@ async function resetDatabase() {
   try {
     // Drop existing tables if they exist
     await pool.query(`
-        DROP TABLE IF EXISTS Companies CASCADE;
-        DROP TABLE IF EXISTS Games CASCADE;
+        DROP TABLE IF EXISTS PlatformReleases CASCADE;
         DROP TABLE IF EXISTS Platforms CASCADE;
+        DROP TABLE IF EXISTS Games CASCADE;
+        DROP TABLE IF EXISTS Companies CASCADE;
     `);
 
     // Create the companies table
@@ -35,9 +36,18 @@ async function resetDatabase() {
     // Create the platforms table
     await pool.query(`
       CREATE TABLE Platforms (
+          PlatformID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          PlatformName VARCHAR(50)
+      );
+    `);
+
+    // Create the platform releases table
+    await pool.query(`
+      CREATE TABLE PlatformReleases (
+          PlatformReleaseID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
           PlatformID INT,
-          PlatformName VARCHAR(50),
           GameID INT,
+          FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID),
           FOREIGN KEY (GameID) REFERENCES Games(GameID)
       );
     `);
@@ -74,47 +84,55 @@ async function resetDatabase() {
 
     // Seed the platforms table
     await pool.query(`
-      INSERT INTO Platforms (PlatformID, PlatformName, GameID) VALUES
-        (1, 'Nintendo Switch', 1),
-        (1, 'Nintendo Switch', 2),
-        (1, 'Nintendo Switch', 3),
-        (2, 'PlayStation 5', 4),
-        (2, 'PlayStation 5', 5),
-        (2, 'PlayStation 5', 6),
-        (3, 'Xbox Series X/S', 7),
-        (4, 'PC', 7),
-        (3, 'Xbox Series X/S', 8),
-        (4, 'PC', 8),
-        (3, 'Xbox Series X/S', 9),
-        (4, 'PC', 9),
-        (2, 'PlayStation 5', 10),
-        (3, 'Xbox Series X/S', 10),
-        (4, 'PC', 10),
-        (2, 'PlayStation 5', 11),
-        (3, 'Xbox Series X/S', 11),
-        (4, 'PC', 11),
-        (2, 'PlayStation 5', 12),
-        (3, 'Xbox Series X/S', 12),
-        (4, 'PC', 12),
-        (5, 'Mobile', 12),
-        (2, 'PlayStation 5', 13),
-        (3, 'Xbox Series X/S', 13),
-        (4, 'PC', 13),
-        (2, 'PlayStation 5', 14),
-        (3, 'Xbox Series X/S', 14),
-        (4, 'PC', 14),
-        (5, 'Mobile', 14),
-        (2, 'PlayStation 5', 15),
-        (3, 'Xbox Series X/S', 15),
-        (4, 'PC', 15);
+      INSERT INTO Platforms (PlatformName) VALUES
+        ('Nintendo Switch'),
+        ('PlayStation 5'),
+        ('Xbox Series X'),
+        ('PC');
     `);
 
-    console.log("Database reset successful");
+    // Seed the platform releases table
+    await pool.query(`
+      INSERT INTO PlatformReleases (PlatformID, GameID) VALUES
+        (1, 1),
+        (1, 2),
+        (1, 3),
+        (2, 4),
+        (2, 5),
+        (2, 6),
+        (3, 7),
+        (3, 8),
+        (3, 9),
+        (4, 10),
+        (4, 11),
+        (4, 12),
+        (4, 13),
+        (4, 14),
+        (4, 15);
+    `);
+
+    // Create a view to include game and platform names
+    await pool.query(`
+      CREATE VIEW PlatformReleasesView AS
+      SELECT 
+        pr.PlatformReleaseID,
+        pr.PlatformID,
+        p.PlatformName,
+        pr.GameID,
+        g.GameName
+      FROM 
+        PlatformReleases pr
+      JOIN 
+        Platforms p ON pr.PlatformID = p.PlatformID
+      JOIN 
+        Games g ON pr.GameID = g.GameID;
+    `);
+
   } catch (error) {
-    console.error("Database reset failed: ", error);
+    console.error('Error resetting database:', error);
+    throw error;
   } finally {
-    // End the pool
-    await pool.end();
+    pool.end();
   }
 }
 
