@@ -16,8 +16,16 @@ export async function getPlatformsById(id) {
   return result.rows[0] || null;
 }
 
-export async function createPlatforms(resource) {
+export async function createPlatforms(platform) {
   // Query the database to create an resource and return the newly created resource
+  try {
+      const queryText = "INSERT INTO platforms (platformname, gameid) VALUES ($1, $2) RETURNING *";
+      const result = await pool.query(queryText, [platform.platformname, platform.gameid]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error creating book:', error);
+      throw error;
+    }
 }
 
 export async function updatePlatformsById(id, updates) {

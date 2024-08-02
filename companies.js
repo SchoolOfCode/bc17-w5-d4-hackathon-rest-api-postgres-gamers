@@ -16,8 +16,17 @@ export async function getCompaniesById(id) {
   return result.rows[0] || null;
 }
 
-export async function createCompanies(resource) {
+export async function createCompanies(company) {
   // Query the database to create an resource and return the newly created resource
+  try {
+    // Query the database to create an resource and return the newly created resource
+      const queryText = "INSERT INTO companies (companyname, headquarters, foundedyear) VALUES ($1, $2, $3) RETURNING *";
+      const result = await pool.query(queryText, [company.companyname, company.headquarters, company.foundedyear]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error creating book:', error);
+      throw error;
+    }
 }
 
 export async function updateCompaniesById(id, updates) {

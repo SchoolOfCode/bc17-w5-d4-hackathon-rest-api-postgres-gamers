@@ -16,8 +16,16 @@ export async function getGamesById(id) {
   return result.rows[0] || null;
 }
 
-export async function createGames(resource) {
+export async function createGames(game) {
+  try {
   // Query the database to create an resource and return the newly created resource
+    const queryText = "INSERT INTO games (gamename, releaseyear, genre, revenue, companyid) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+    const result = await pool.query(queryText, [game.gamename, game.releaseyear, game.genre, game.revenue, game.companyid]);
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error creating book:', error);
+    throw error;
+  }
 }
 
 export async function updateGamesById(id, updates) {

@@ -41,11 +41,19 @@ app.use(morgan("dev")); // morgan() middleware is used to log the requests to th
 
 // Endpoint to retrieve all <games>
 app.get("/Games/", async function (req, res) {
-    const games = await getGames();
+  try {
+    const games = await getGames(); // Assume getGames is a function that retrieves games from the database
     res.status(200).json({ 
       status: "success", 
       data: games 
     });
+  } catch (error) {
+    console.error('Error retrieving games:', error);
+    res.status(500).json({ 
+      status: "error", 
+      message: "Internal Server Error" 
+    });
+  }
 });
 
 // Endpoint to retrieve a <games> by id
@@ -62,6 +70,9 @@ app.get("/Games/:id", async function (req, res) { //endpoint
 
 // Endpoint to create a new <games>
 app.post("/Games/", async function (req, res) {
+  const data = req.body;
+  const game = await createGames(data);
+  res.status(201).json({ status: "success", data: game });  
 });
 
 // Endpoint to update a specific <games> by id
@@ -97,6 +108,9 @@ app.get("/Companies/", async function (req, res) {
   
   // Endpoint to create a new <companies>
   app.post("/Companies/", async function (req, res) {
+    const data = req.body;
+    const company = await createCompanies(data);
+    res.status(201).json({ status: "success", data: company });  
   });
   
   // Endpoint to update a specific <companies> by id
@@ -132,8 +146,10 @@ app.get("/Platforms/:id", async function (req, res) {
 
 // Endpoint to create a new <platforms>
 app.post("/Platforms/", async function (req, res) {
+  const data = req.body;
+  const company = await createCompanies(data);
+  res.status(201).json({ status: "success", data: company });  
 });
-
 // Endpoint to update a specific <platforms> by id
 app.patch("/Platforms/:id", async function (req, res) {
 });

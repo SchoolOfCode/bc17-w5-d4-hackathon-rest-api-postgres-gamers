@@ -12,25 +12,25 @@ async function resetDatabase() {
     // Create the companies table
     await pool.query(`
       CREATE TABLE Companies (
-          CompanyID INT PRIMARY KEY,
+          CompanyID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
           CompanyName VARCHAR(100),
           Headquarters VARCHAR(100),
           FoundedYear INT
-    );
+      );
     `);
 
     // Create the platforms table
     await pool.query(`
       CREATE TABLE Platforms (
-          PlatformID INT PRIMARY KEY,
-          PlatformName VARCHAR(50)
+          PlatformID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          PlatformName VARCHAR(50) UNIQUE
       );
     `);
 
-    // Create the games table with a foreign key to the companies table
+    // Create the games table with a foreign key to the companies and platforms tables
     await pool.query(`
       CREATE TABLE Games (
-          GameID INT PRIMARY KEY,
+          GameID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
           GameName VARCHAR(100),
           ReleaseYear INT,
           Genre VARCHAR(50),
@@ -44,42 +44,138 @@ async function resetDatabase() {
 
     // Seed the companies table
     await pool.query(`
-      INSERT INTO Companies (CompanyID, CompanyName, Headquarters, FoundedYear) VALUES
-        (1, 'Nintendo', 'Kyoto, Japan', 1889),
-        (2, 'Sony Interactive Entertainment', 'San Mateo, California, USA', 1993),
-        (3, 'Microsoft Gaming', 'Redmond, Washington, USA', 2000),
-        (4, 'Rockstar Games', 'New York City, New York, USA', 1998),
-        (5, 'Electronic Arts', 'Redwood City, California, USA', 1982);
-    `);
-
-    // Seed the platforms table
-    await pool.query(`
-      INSERT INTO Platforms (PlatformID, PlatformName) VALUES
-        (1, 'Nintendo Switch'),
-        (2, 'PlayStation 5'),
-        (3, 'Xbox Series X/S'),
-        (4, 'PC'),
-        (5, 'Mobile');
+      INSERT INTO Companies (CompanyName, Headquarters, FoundedYear) VALUES
+        ('Nintendo', 'Kyoto, Japan', 1889),
+        ('Sony Interactive Entertainment', 'San Mateo, California, USA', 1993),
+        ('Microsoft Gaming', 'Redmond, Washington, USA', 2000),
+        ('Rockstar Games', 'New York City, New York, USA', 1998),
+        ('Electronic Arts', 'Redwood City, California, USA', 1982);
     `);
 
     // Seed the games table
     await pool.query(`
-      INSERT INTO Games (GameID, GameName, ReleaseYear, Genre, Revenue, CompanyID, PlatformID) VALUES
-        (1, 'The Legend of Zelda: Breath of the Wild', 2017, 'Action-Adventure', 1500.00, 1, 1),
-        (2, 'Animal Crossing: New Horizons', 2020, 'Life Simulation', 2000.00, 1, 1),
-        (3, 'Super Mario Odyssey', 2017, 'Platformer', 1350.00, 1, 1),
-        (4, 'God of War Ragnarök', 2022, 'Action-Adventure', 1200.00, 2, 2),
-        (5, 'Spider-Man: Miles Morales', 2020, 'Action-Adventure', 950.00, 2, 2),
-        (6, 'Horizon Forbidden West', 2022, 'Action RPG', 850.00, 2, 2),
-        (7, 'Halo Infinite', 2021, 'First-Person Shooter', 750.00, 3, 3),
-        (8, 'Forza Horizon 5', 2021, 'Racing', 700.00, 3, 3),
-        (9, 'Sea of Thieves', 2018, 'Action-Adventure', 650.00, 3, 3),
-        (10, 'Grand Theft Auto V', 2013, 'Action-Adventure', 6000.00, 4, 4),
-        (11, 'Red Dead Redemption 2', 2018, 'Action-Adventure', 3000.00, 4, 4),
-        (12, 'GTA Online', 2013, 'Action-Adventure', 2500.00, 4, 4),
-        (13, 'FIFA 23', 2022, 'Sports', 1800.00, 5, 4),
-        (14, 'Apex Legends', 2019, 'Battle Royale', 2000.00, 5, 4),
-        (15, 'The Sims 4', 2014, 'Life Simulation', 1500.00, 5, 4);
+      INSERT INTO Games (GameName, ReleaseYear, Genre, Revenue, CompanyID) VALUES
+        ('The Legend of Zelda: Breath of the Wild', 2017, 'Action-Adventure', 1920.00, 1),
+        ('Animal Crossing: New Horizons', 2020, 'Life Simulation', 3300.00, 1),
+        ('Super Mario Odyssey', 2017, 'Platformer', 1690.00, 1),
+        ('God of War Ragnarök', 2022, 'Action-Adventure', 1000.00, 2),
+        ('Spider-Man: Miles Morales', 2020, 'Action-Adventure', 625.00, 2),
+        ('Horizon Forbidden West', 2022, 'Action RPG', 500.00, 2),
+        ('Halo Infinite', 2021, 'First-Person Shooter', 525.00, 3),
+        ('Forza Horizon 5', 2021, 'Racing', 350.00, 3),
+        ('Sea of Thieves', 2018, 'Action-Adventure', 500.00, 3),
+        ('Grand Theft Auto V', 2013, 'Action-Adventure', 7500.00, 4),
+        ('Red Dead Redemption 2', 2018, 'Action-Adventure', 2500.00, 4),
+        ('Minecraft', 2011, 'Sandbox', 9000.00, 3),
+        ('FIFA 23', 2022, 'Sports', 1000.00, 5),
+        ('Apex Legends', 2019, 'Battle Royale', 2000.00, 5),
+        ('The Sims 4', 2014, 'Life Simulation', 1000.00, 5);
+    `);
+
+    // Seed the platforms table
+    await pool.query(`
+      INSERT INTO Platforms (PlatformName, GameID) VALUES
+        ('Nintendo Switch', 1),
+        ('Nintendo Switch', 2),
+        ('Nintendo Switch', 3),
+        ('PlayStation 5', 4),
+        ('PlayStation 5', 5),
+        ('PlayStation 5', 6),
+        ('Xbox Series X/S', 7),
+        ('PC', 7),
+        ('Xbox Series X/S', 8),
+        ('PC', 8),
+        ('Xbox Series X/S', 9),
+        ('PC', 9),
+        ('PlayStation 5', 10),
+        ('Xbox Series X/S', 10),
+        ('PC', 10),
+        ('PlayStation 5', 11),
+        ('Xbox Series X/S', 11),
+        ('PC', 11),
+        ('PlayStation 5', 12),
+        ('Xbox Series X/S', 12),
+        ('PC', 12),
+        ('Mobile', 12),
+        ('PlayStation 5', 13),
+        ('Xbox Series X/S', 13),
+        ('PC', 13),
+        ('PlayStation 5', 14),
+        ('Xbox Series X/S', 14),
+        ('PC', 14),
+        ('Mobile', 14),
+        ('PlayStation 5', 15),
+        ('Xbox Series X/S', 15),
+        ('PC', 15);
+    `);
+
+    console.log("Database reset successful");
+
+    // Seed the companies table
+    await pool.query(`
+      INSERT INTO Companies (CompanyName, Headquarters, FoundedYear) VALUES
+        ('Nintendo', 'Kyoto, Japan', 1889),
+        ('Sony Interactive Entertainment', 'San Mateo, California, USA', 1993),
+        ('Microsoft Gaming', 'Redmond, Washington, USA', 2000),
+        ('Rockstar Games', 'New York City, New York, USA', 1998),
+        ('Electronic Arts', 'Redwood City, California, USA', 1982);
+    `);
+
+    // Seed the games table
+    await pool.query(`
+      INSERT INTO Games (GameName, ReleaseYear, Genre, Revenue, CompanyID) VALUES
+        ('The Legend of Zelda: Breath of the Wild', 2017, 'Action-Adventure', 1920.00, 1),
+        ('Animal Crossing: New Horizons', 2020, 'Life Simulation', 3300.00, 1),
+        ('Super Mario Odyssey', 2017, 'Platformer', 1690.00, 1),
+        ('God of War Ragnarök', 2022, 'Action-Adventure', 1000.00, 2),
+        ('Spider-Man: Miles Morales', 2020, 'Action-Adventure', 625.00, 2),
+        ('Horizon Forbidden West', 2022, 'Action RPG', 500.00, 2),
+        ('Halo Infinite', 2021, 'First-Person Shooter', 525.00, 3),
+        ('Forza Horizon 5', 2021, 'Racing', 350.00, 3),
+        ('Sea of Thieves', 2018, 'Action-Adventure', 500.00, 3),
+        ('Grand Theft Auto V', 2013, 'Action-Adventure', 7500.00, 4),
+        ('Red Dead Redemption 2', 2018, 'Action-Adventure', 2500.00, 4),
+        ('Minecraft', 2011, 'Sandbox', 9000.00, 3),
+        ('FIFA 23', 2022, 'Sports', 1000.00, 5),
+        ('Apex Legends', 2019, 'Battle Royale', 2000.00, 5),
+        ('The Sims 4', 2014, 'Life Simulation', 1000.00, 5);
+    `);
+
+    // Seed the platforms table
+    await pool.query(`
+      INSERT INTO Platforms (PlatformName, GameID) VALUES
+        ('Nintendo Switch', 1),
+        ('Nintendo Switch', 2),
+        ('Nintendo Switch', 3),
+        ('PlayStation 5', 4),
+        ('PlayStation 5', 5),
+        ('PlayStation 5', 6),
+        ('Xbox Series X/S', 7),
+        ('PC', 7),
+        ('Xbox Series X/S', 8),
+        ('PC', 8),
+        ('Xbox Series X/S', 9),
+        ('PC', 9),
+        ('PlayStation 5', 10),
+        ('Xbox Series X/S', 10),
+        ('PC', 10),
+        ('PlayStation 5', 11),
+        ('Xbox Series X/S', 11),
+        ('PC', 11),
+        ('PlayStation 5', 12),
+        ('Xbox Series X/S', 12),
+        ('PC', 12),
+        ('Mobile', 12),
+        ('PlayStation 5', 13),
+        ('Xbox Series X/S', 13),
+        ('PC', 13),
+        ('PlayStation 5', 14),
+        ('Xbox Series X/S', 14),
+        ('PC', 14),
+        ('Mobile', 14),
+        ('PlayStation 5', 15),
+        ('Xbox Series X/S', 15),
+        ('PC', 15);
     `);
 
     console.log("Database reset successful");
