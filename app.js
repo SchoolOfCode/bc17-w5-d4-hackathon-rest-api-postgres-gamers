@@ -91,6 +91,14 @@ app.patch("/Games/:id", async function (req, res) {
 
 // Endpoint to delete a specific <games> by id
 app.delete("/Games/:id", async function (req, res) {
+  const id = req.params.id;
+  const game = await deleteGamesById(id);
+  if (!game) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "man you suck at archiving" } });
+  }
+  res.status(200).json({ status: "success", data: game });
 });
 
 // Companies Route Handlers
@@ -129,6 +137,15 @@ app.get("/Companies/", async function (req, res) {
   
   // Endpoint to delete a specific <companies> by id
   app.delete("/Companies/:id", async function (req, res) {
+    const id = req.params.id;
+  const company = await deleteCompaniesById(id);
+  // Assume 404 status if the book is not found
+  if (!company) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "Microsoft beat you to it" } });
+  }
+  res.status(200).json({ status: "success", data: company });
   });
 
 // Platforms Route Handlers
@@ -167,6 +184,14 @@ app.patch("/Platforms/:id", async function (req, res) {
 
 // Endpoint to delete a specific <platforms> by id
 app.delete("/Platforms/:id", async function (req, res) {
+  const id = req.params.id;
+  const platform = await deletePlatformsById(id);
+  if (!platform) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "The sands of time have already deleted what you seek" } });
+  }
+  res.status(200).json({ status: "success", data: book });
 });
 
 

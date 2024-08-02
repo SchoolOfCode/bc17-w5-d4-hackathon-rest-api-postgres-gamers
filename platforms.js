@@ -41,4 +41,7 @@ export async function updatePlatformsById(id, gameid, updates) {
 
 export async function deletePlatformsById(id) {
   // Query the database to delete the resource and return the deleted resource or null
+  const queryText = "DELETE FROM platforms WHERE id = $1"
+  const result = await pool.query(queryText, [id]);
+  return result.rows[0] || null;
 }
