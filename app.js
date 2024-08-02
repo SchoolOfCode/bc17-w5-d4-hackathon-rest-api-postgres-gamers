@@ -121,42 +121,34 @@ app.post("/Companies/", async function (req, res) {
   const data = req.body;
   try {
     const company = await createCompanies(data);
-    res.status(201).json({ status: "success", data: company });
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
-
-// Endpoint to update a specific <companies> by id
-app.patch("/Companies/:id", async function (req, res) {
-  const id = req.params.id;
-  const data = req.body;
-  try {
+    res.status(201).json({ status: "success", data: company });  
+  });
+  
+  // Endpoint to update a specific <companies> by id
+  app.patch("/Companies/:id", async function (req, res) {
+    const id = req.params.id;
+    const data = req.body;
     const company = await updateCompaniesById(id, data);
     if (!company) {
-      res.status(404).json({ status: "error", message: "Company not found" });
-    } else {
-      res.status(200).json({ status: "success", data: company });
+      return res
+        .status(404)
+        .json({ status: "fail", data: { msg: "Microsoft beat you to it" } });
     }
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    res.status(200).json({ status: "success", data: company });
+  });
+  
+  // Endpoint to delete a specific <companies> by id
+  app.delete("/Companies/:id", async function (req, res) {
+    const id = req.params.id;
+  const company = await deleteCompaniesById(id);
+  // Assume 404 status if the book is not found
+  if (!company) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "Microsoft beat you to it" } });
   }
-});
-
-// Endpoint to delete a specific <companies> by id
-app.delete("/Companies/:id", async function (req, res) {
-  const id = req.params.id;
-  try {
-    const company = await deleteCompaniesById(id);
-    if (!company) {
-      res.status(404).json({ status: "error", message: "Company not found" });
-    } else {
-      res.status(200).json({ status: "success", data: company });
-    }
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
-  }
-});
+  res.status(200).json({ status: "success", data: company });
+  });
 
 // Platforms Route Handlers
 
@@ -198,6 +190,15 @@ app.post("/Platforms/", async function (req, res) {
 
 // Endpoint to update a specific <platforms> by id
 app.patch("/Platforms/:id", async function (req, res) {
+  const id = req.params.id;
+  const data = req.body;
+  const platform = await updatePlatformsById(id, data);
+  if (!platform) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "The sands of time have already deleted what you seek" } });
+  }
+  res.status(200).json({ status: "success", data: platform });
   const id = req.params.id;
   const data = req.body;
   try {
