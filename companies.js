@@ -38,7 +38,7 @@ export async function updateCompaniesById(id, updates) {
 
 export async function deleteCompaniesById(id) {
   // Query the database to delete the resource and return the deleted resource or null
-  const queryText = "DELETE FROM companies WHERE id = $1"
+  const queryText = "DELETE FROM companies WHERE companyid = $1"
   const result = await pool.query(queryText, [id]);
   return result.rows[0] || null;
 }

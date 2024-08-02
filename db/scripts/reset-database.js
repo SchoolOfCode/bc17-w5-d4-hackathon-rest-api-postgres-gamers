@@ -29,7 +29,7 @@ async function resetDatabase() {
           Genre VARCHAR(50),
           Revenue DECIMAL(10, 2),  -- in millions of dollars
           CompanyID INT,
-          FOREIGN KEY (CompanyID) REFERENCES Companies(CompanyID)
+          FOREIGN KEY (CompanyID) REFERENCES Companies(CompanyID) ON DELETE CASCADE
       );
     `);
 
@@ -37,18 +37,7 @@ async function resetDatabase() {
     await pool.query(`
       CREATE TABLE Platforms (
           PlatformID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-          PlatformName VARCHAR(50)
-      );
-    `);
-
-    // Create the platform releases table
-    await pool.query(`
-      CREATE TABLE PlatformReleases (
-          PlatformReleaseID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-          PlatformID INT,
-          GameID INT,
-          FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID),
-          FOREIGN KEY (GameID) REFERENCES Games(GameID)
+          PlatformName VARCHAR(100)
       );
     `);
 
@@ -60,6 +49,18 @@ async function resetDatabase() {
         ('Microsoft Gaming', 'Redmond, Washington, USA', 2000),
         ('Rockstar Games', 'New York City, New York, USA', 1998),
         ('Electronic Arts', 'Redwood City, California, USA', 1982);
+    `);
+
+    // Create the platform releases table with foreign keys to games and platforms
+    await pool.query(`
+      CREATE TABLE PlatformReleases (
+          PlatformReleaseID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          GameID INT,
+          PlatformID INT,
+          ReleaseDate DATE,
+          FOREIGN KEY (GameID) REFERENCES Games(GameID) ON DELETE CASCADE,
+          FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID) ON DELETE CASCADE
+      );
     `);
 
     // Seed the games table
@@ -128,12 +129,13 @@ async function resetDatabase() {
         Games g ON pr.GameID = g.GameID;
     `);
 
+    console.log('Database reset and seeded successfully.');
   } catch (error) {
     console.error('Error resetting database:', error);
     throw error;
   } finally {
-    pool.end();
+    await pool.end();
   }
 }
 
-await resetDatabase();
+resetDatabase();
