@@ -31,6 +31,9 @@ export async function createCompanies(company) {
 
 export async function updateCompaniesById(id, updates) {
   // Query the database to update the resource and return the newly updated resource or null
+  const queryText = "UPDATE companies SET companyname = $1, headquarters = $2, foundedyear = $3 WHERE companyid = $4 RETURNING *"; 
+  const result = await pool.query(queryText, [updates.companyname, updates.headquarters, updates.foundedyear, id]);
+  return result.rows || null;
 }
 
 export async function deleteCompaniesById(id) {

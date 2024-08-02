@@ -133,6 +133,15 @@ app.get("/Companies/", async function (req, res) {
   
   // Endpoint to update a specific <companies> by id
   app.patch("/Companies/:id", async function (req, res) {
+    const id = req.params.id;
+    const data = req.body;
+    const company = await updateCompaniesById(id, data);
+    if (!company) {
+      return res
+        .status(404)
+        .json({ status: "fail", data: { msg: "Microsoft beat you to it" } });
+    }
+    res.status(200).json({ status: "success", data: company });
   });
   
   // Endpoint to delete a specific <companies> by id
@@ -180,6 +189,15 @@ app.post("/Platforms/", async function (req, res) {
 });
 // Endpoint to update a specific <platforms> by id
 app.patch("/Platforms/:id", async function (req, res) {
+  const id = req.params.id;
+  const data = req.body;
+  const platform = await updatePlatformsById(id, data);
+  if (!platform) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "The sands of time have already deleted what you seek" } });
+  }
+  res.status(200).json({ status: "success", data: platform });
 });
 
 // Endpoint to delete a specific <platforms> by id
