@@ -34,7 +34,111 @@ app.get("/Games/", async function (req, res) {
 
 // Endpoint to retrieve a <games> by id
 app.get("/Games/:id", async function (req, res) {
-  const id = req.params.id;
+  const id = req.params.id;  const express = require('express');
+  const morgan = require('morgan');
+  const app = express();
+  
+  // Middleware
+  app.use(express.json()); // express.json() middleware is used to parse incoming JSON requests
+  app.use(morgan("dev")); // morgan() middleware is used to log the requests to the console
+  
+  // Games Route Handlers
+  
+  // Endpoint to retrieve all <games>
+  app.get("/Games/", async function (req, res) {
+    try {
+      const games = await getGames();
+      res.status(200).json({ status: "success", data: games });
+    } catch (error) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  });
+  
+  // Endpoint to retrieve a <games> by id
+  app.get("/Games/:id", async function (req, res) {
+    const id = req.params.id;    const express = require('express');
+    const morgan = require('morgan');
+    const app = express();
+    
+    // Middleware
+    app.use(express.json()); // express.json() middleware is used to parse incoming JSON requests
+    app.use(morgan("dev")); // morgan() middleware is used to log the requests to the console
+    
+    // Games Route Handlers
+    
+    // Endpoint to retrieve all <games>
+    app.get("/Games/", async function (req, res) {
+      try {
+        const games = await getGames();
+        res.status(200).json({ status: "success", data: games });
+      } catch (error) {
+        res.status(500).json({ status: "error", message: error.message });
+      }
+    });
+    
+    // Endpoint to retrieve a <games> by id
+    app.get("/Games/:id", async function (req, res) {
+      const id = req.params.id;
+      try {
+        const games = await getGamesById(id);
+        if (!games) {
+          res.status(404).json({ status: "error", message: "Game not found" });
+        } else {
+          res.status(200).json({ status: "success", data: games });
+        }
+      } catch (error) {
+        res.status(500).json({ status: "error", message: error.message });
+      }
+    });
+    
+    // Start the server
+    const PORT = process.env.PORT || 8080;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+    try {
+      const games = await getGamesById(id);
+      if (!games) {
+        res.status(404).json({ status: "error", message: "Game not found" });
+      } else {
+        res.status(200).json({ status: "success", data: games });
+      }
+    } catch (error) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  });
+  
+  // Endpoint to create a new <games>
+  app.post("/Games/", async function (req, res) {
+    const data = req.body;
+    try {
+      const newGame = await createGame(data);
+      res.status(201).json({ status: "success", data: newGame });
+    } catch (error) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  });
+  
+  // Endpoint to delete a specific <platformReleases> by id
+  app.delete("/PlatformReleases/:id", async function (req, res) {
+    const id = req.params.id;
+    try {
+      const platformRelease = await deletePlatformReleaseById(id);
+      if (!platformRelease) {
+        res.status(404).json({ status: "error", message: "Platform Release not found" });
+      } else {
+        res.status(200).json({ status: "success", data: platformRelease });
+      }
+    } catch (error) {
+      res.status(500).json({ status: "error", message: error.message });
+    }
+  });
+  
+  // Start the server
+  const PORT = process.env.PORT || 8080;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
   try {
     const games = await getGamesById(id);
     if (!games) {
@@ -121,8 +225,11 @@ app.post("/Companies/", async function (req, res) {
   const data = req.body;
   try {
     const company = await createCompanies(data);
-    res.status(201).json({ status: "success", data: company });  
-  });
+    res.status(201).json({ status: "success", data: company });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+});
   
   // Endpoint to update a specific <companies> by id
   app.patch("/Companies/:id", async function (req, res) {
@@ -199,18 +306,6 @@ app.patch("/Platforms/:id", async function (req, res) {
       .json({ status: "fail", data: { msg: "The sands of time have already deleted what you seek" } });
   }
   res.status(200).json({ status: "success", data: platform });
-  const id = req.params.id;
-  const data = req.body;
-  try {
-    const platform = await updatePlatformsById(id, data);
-    if (!platform) {
-      res.status(404).json({ status: "error", message: "Platform not found" });
-    } else {
-      res.status(200).json({ status: "success", data: platform });
-    }
-  } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
-  }
 });
 
 // Endpoint to delete a specific <platforms> by id
